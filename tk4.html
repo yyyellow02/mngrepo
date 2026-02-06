@@ -43,7 +43,7 @@
 <body>
     <div id="app">
         <div v-if="showAuthModal" class="fixed inset-0 bg-white/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-8">
-            <h1 class="text-4xl font-black text-[#ff9e97] mb-8 text-center">推し活紀錄🌸</h1>
+            <h1 class="text-4xl font-black text-[#ff9e97] mb-8 text-center">會った記録🌸</h1>
             <div class="w-full max-w-sm space-y-4">
                 <input v-model="authEmail" type="email" placeholder="電子郵件" class="w-full bg-[#f8f9fa] rounded-2xl p-4 outline-none border border-gray-100">
                 <input v-model="authPassword" type="password" placeholder="密碼 (至少6位)" class="w-full bg-[#f8f9fa] rounded-2xl p-4 outline-none border border-gray-100">
@@ -61,7 +61,7 @@
         <div v-if="!showAuthModal" class="max-w-md mx-auto min-h-screen flex flex-col p-5 pb-28">
             <header class="flex justify-between items-center mb-6">
                 <div>
-                    <h1 class="text-2xl font-black text-[#ff9e97]" @click="resetView">推し活紀錄🌸</h1>
+                    <h1 class="text-2xl font-black text-[#ff9e97]" @click="resetView">會った記録🌸</h1>
                     <p class="text-[10px] text-gray-300">{{ user?.email }} · <span @click="handleLogout" class="underline cursor-pointer">登出</span></p>
                 </div>
                 <div class="flex gap-4">
@@ -384,32 +384,7 @@
                             await auth.signInWithEmailAndPassword(this.authEmail, this.authPassword);
                         }
                     } catch (e) {
-let errorMsg = "發生未知錯誤";
-        
-        switch (e.code) {
-            case 'auth/invalid-credential':
-                errorMsg = "帳號或密碼輸入錯誤。";
-                break;
-            case 'auth/user-not-found':
-                errorMsg = "找不到帳號。";
-                break;
-            case 'auth/wrong-password':
-                errorMsg = "密碼錯誤。";
-                break;
-            case 'auth/email-already-in-use':
-                errorMsg = "電子郵件已經註冊過。";
-                break;
-            case 'auth/invalid-email':
-                errorMsg = "電子郵件格式錯誤。";
-                break;
-            case 'auth/weak-password':
-                errorMsg = "密碼至少要6個字。";
-                break;
-            default:
-                errorMsg = e.message; // 其他錯誤顯示原訊息
-        }
-        
-        alert(errorMsg);
+                        alert(e.message);
                     } finally {
                         this.loading = false;
                     }
@@ -538,22 +513,79 @@ let errorMsg = "發生未知錯誤";
                     return { 'bubble-me': role === 'me', 'bubble-member': role === 'member', 'act-me': role === 'me_act', 'act-member': role === 'mb_act', 'act-narrative': role === 'narrative' };
                 },
                 initCharts() {
-                    const months = {}; const memberTickets = {};
-                    this.history.forEach(h => {
-                        const m = h.date.substring(0, 7);
-                        months[m] = (months[m] || 0) + 1;
-                        memberTickets[h.member] = (memberTickets[h.member] || 0) + Number(h.tickets);
+                    const singles = this.db.singles; 
+                    const memberDatasets = {};
+                    this.db.members.forEach(m => {
+                        memberDatasets[m.name] = {
+                            label: m.name,
+                            data: new Array(singles.length).fill(0),
+                            borderColor: m.color1 || '#ffb7b2',
+                            backgroundColor: m.color1 || '#ffb7b2',
+                            tension: 0.3,
+                            fill: false
+                        };
                     });
+
+                    this.history.forEach(h => {
+                        const sIdx = singles.indexOf(h.single);
+                        if (sIdx !== -1 && memberDatasets[h.member]) {
+                            memberDatasets[h.member].data[sIdx] += Number(h.tickets || 0);
+                        }
+                    });
+
+                    const sortedStats = [...this.sortedMemberStats];
+                    const barLabels = sortedStats.map(s => s.name);
+                    const barData = sortedStats.map(s => s.tickets);
+                    const barColors = sortedStats.map(s => {
+                        const m = this.db.members.find(mem => mem.name === s.name);
+                        return m ? m.color1 : '#ffb7b2';
+                    });
+
                     if (this.charts.monthly) this.charts.monthly.destroy();
                     const ctxM = document.getElementById('monthlyChart')?.getContext('2d');
-                    if(ctxM) this.charts.monthly = new Chart(ctxM, { type: 'line', data: { labels: Object.keys(months).sort(), datasets: [{ label: '見面次數', data: Object.values(months), borderColor: '#ffb7b2', tension: 0.4 }] } });
+                    if (ctxM) {
+                        this.charts.monthly = new Chart(ctxM, {
+                            type: 'line',
+                            data: {
+                                labels: singles,
+                                datasets: Object.values(memberDatasets)
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: { legend: { display: true, labels: { boxWidth: 12, font: { size: 10 } } } },
+                                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                            }
+                        });
+                    }
+
                     if (this.charts.pie) this.charts.pie.destroy();
                     const ctxP = document.getElementById('memberPieChart')?.getContext('2d');
-                    if(ctxP) this.charts.pie = new Chart(ctxP, { type: 'doughnut', data: { labels: Object.keys(memberTickets), datasets: [{ data: Object.values(memberTickets), backgroundColor: ['#ffb7b2', '#ffdbcc', '#d0e7ff', '#adbcfd', '#fdf6f0'] }] } });
+                    if (ctxP) {
+                        this.charts.pie = new Chart(ctxP, {
+                            type: 'bar',
+                            data: {
+                                labels: barLabels,
+                                datasets: [{
+                                    label: '累積枚數',
+                                    data: barData,
+                                    backgroundColor: barColors,
+                                    borderRadius: 8,
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y', 
+                                responsive: true,
+                                plugins: { legend: { display: false } },
+                                scales: { 
+                                    x: { beginAtZero: true },
+                                    y: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
                 }
             }
         }).mount('#app')
     </script>
 </body>
-
 </html>
