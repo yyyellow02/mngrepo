@@ -43,7 +43,7 @@
 <body>
     <div id="app">
         <div v-if="showAuthModal" class="fixed inset-0 bg-white/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-8">
-            <h1 class="text-4xl font-black text-[#ff9e97] mb-8 text-center">會った記録🌸</h1>
+            <h1 class="text-4xl font-black text-[#ff9e97] mb-8 text-center">推し活紀錄🌸</h1>
             <div class="w-full max-w-sm space-y-4">
                 <input v-model="authEmail" type="email" placeholder="電子郵件" class="w-full bg-[#f8f9fa] rounded-2xl p-4 outline-none border border-gray-100">
                 <input v-model="authPassword" type="password" placeholder="密碼 (至少6位)" class="w-full bg-[#f8f9fa] rounded-2xl p-4 outline-none border border-gray-100">
@@ -61,7 +61,7 @@
         <div v-if="!showAuthModal" class="max-w-md mx-auto min-h-screen flex flex-col p-5 pb-28">
             <header class="flex justify-between items-center mb-6">
                 <div>
-                    <h1 class="text-2xl font-black text-[#ff9e97]" @click="resetView">會った記録🌸</h1>
+                    <h1 class="text-2xl font-black text-[#ff9e97]" @click="resetView">推し活紀錄🌸</h1>
                     <p class="text-[10px] text-gray-300">{{ user?.email }} · <span @click="handleLogout" class="underline cursor-pointer">登出</span></p>
                 </div>
                 <div class="flex gap-4">
@@ -530,4 +530,5 @@
         }).mount('#app')
     </script>
 </body>
+
 </html>
