@@ -72,11 +72,11 @@
 
             <section v-if="currentPage === 'stats'" class="space-y-6">
                 <div class="soft-card p-5">
-                    <h3 class="text-xs font-bold mb-4 text-gray-400 uppercase tracking-widest">月次見面頻率</h3>
+                    <h3 class="text-xs font-bold mb-4 text-gray-400 uppercase tracking-widest">單曲見面枚數</h3>
                     <canvas id="monthlyChart"></canvas>
                 </div>
                 <div class="soft-card p-5">
-                    <h3 class="text-xs font-bold mb-4 text-gray-400 uppercase tracking-widest">成員分佈 (枚數)</h3>
+                    <h3 class="text-xs font-bold mb-4 text-gray-400 uppercase tracking-widest">成員枚數排行</h3>
                     <canvas id="memberPieChart"></canvas>
                 </div>
             </section>
@@ -409,7 +409,7 @@ let errorMsg = "發生未知錯誤";
                 errorMsg = e.message;
         }
                         alert(e.message);
-                    } finally {
+
                         this.loading = false;
                     }
                 },
