@@ -384,6 +384,30 @@
                             await auth.signInWithEmailAndPassword(this.authEmail, this.authPassword);
                         }
                     } catch (e) {
+let errorMsg = "發生未知錯誤";
+        
+        switch (e.code) {
+            case 'auth/invalid-credential':
+                errorMsg = "帳號或密碼輸入錯誤。";
+                break;
+            case 'auth/user-not-found':
+                errorMsg = "找不到帳號。";
+                break;
+            case 'auth/wrong-password':
+                errorMsg = "密碼錯誤。";
+                break;
+            case 'auth/email-already-in-use':
+                errorMsg = "這個電子郵件已經註冊過。";
+                break;
+            case 'auth/invalid-email':
+                errorMsg = "電子郵件格式錯誤。";
+                break;
+            case 'auth/weak-password':
+                errorMsg = "密碼=至少要6個字。";
+                break;
+            default:
+                errorMsg = e.message;
+        }
                         alert(e.message);
                     } finally {
                         this.loading = false;
@@ -589,4 +613,3 @@
     </script>
 </body>
 </html>
-
