@@ -374,46 +374,46 @@
             },
             methods: {
                 // Firebase Auth 邏輯
-async handleAuth() {
-    this.loading = true;
-    try {
-        if (this.isRegistering) {
-            await auth.createUserWithEmailAndPassword(this.authEmail, this.authPassword);
-        } else {
-            await auth.signInWithEmailAndPassword(this.authEmail, this.authPassword);
-        }
-    } catch (e) {
-        // --- 這裡開始是修改的邏輯 ---
-        let errorMsg = "發生未知錯誤";
+                async handleAuth() {
+                    if (!this.authEmail || !this.authPassword) return alert("請填寫完整資訊");
+                    this.loading = true;
+                    try {
+                        if (this.isRegistering) {
+                            await auth.createUserWithEmailAndPassword(this.authEmail, this.authPassword);
+                        } else {
+                            await auth.signInWithEmailAndPassword(this.authEmail, this.authPassword);
+                        }
+                    } catch (e) {
+let errorMsg = "發生未知錯誤";
         
         switch (e.code) {
             case 'auth/invalid-credential':
                 errorMsg = "帳號或密碼輸入錯誤。";
                 break;
             case 'auth/user-not-found':
-                errorMsg = "找不到這個帳號。";
+                errorMsg = "找不到帳號。";
                 break;
             case 'auth/wrong-password':
                 errorMsg = "密碼錯誤。";
                 break;
             case 'auth/email-already-in-use':
-                errorMsg = "電子郵件已經被註冊。";
+                errorMsg = "電子郵件已經註冊過。";
                 break;
             case 'auth/invalid-email':
-                errorMsg = "電子郵件格式不正確。";
+                errorMsg = "電子郵件格式錯誤。";
                 break;
             case 'auth/weak-password':
-                errorMsg = "密碼太簡單了，至少要 6 個字。";
+                errorMsg = "密碼至少要6個字。";
                 break;
             default:
                 errorMsg = e.message; // 其他錯誤顯示原訊息
         }
         
         alert(errorMsg);
-        // --- 修改結束 ---
-    }
-    this.loading = false;
-}
+                    } finally {
+                        this.loading = false;
+                    }
+                },
                 async handleLogout() {
                     if (confirm("確定登出嗎？")) await auth.signOut();
                 },
@@ -557,4 +557,3 @@ async handleAuth() {
 </body>
 
 </html>
-
