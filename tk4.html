@@ -11,20 +11,20 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root { --main-pink: #ffb7b2; --soft-bg: #fdf6f0; }
     body { 
         background-color: var(--soft-bg); 
-        font-family: 'Kiwi Maru', 'Noto Sans TC', sans-serif;
+        font-family: 'M PLUS Rounded 1c', 'Noto Sans TC', sans-serif;
         color: #5d514a; 
         letter-spacing: 0.02em; 
     }
     h1 { font-family: 'Kiwi Maru', serif !important; font-weight: 500; }
     .soft-card { background: white; border-radius: 24px; box-shadow: 0 8px 20px rgba(180, 160, 140, 0.08); border: 1px solid rgba(255, 255, 255, 0.5); }
     .btn-main { background: var(--main-pink); color: white; border-radius: 16px; transition: all 0.2s ease; }
-    .chat-bubble { max-width: 85%; width: fit-content; padding: 10px 16px; margin-bottom: 4px; font-size: 14px; line-height: 1.6; border-radius: 18px; position: relative; font-weight: 500; }
+    .chat-bubble { max-width: 85%; width: fit-content; padding: 10px 16px; margin-bottom: 4px; font-size: 14px; line-height: 1.6; border-radius: 18px; position: relative; font-weight: 500; word-wrap: break-word; }
     .bubble-me { background: #ffdbcc; color: #7c4d3a; align-self: flex-end; border-radius: 18px 18px 4px 18px; }
     .bubble-member { background: #d0e7ff; color: #3d5a80; align-self: flex-start; border-radius: 18px 18px 18px 4px; }
     .act-me { align-self: flex-end; color: #94a3b8; font-size: 12px; margin: 2px 8px 8px 0; font-weight: 400; }
@@ -58,7 +58,7 @@
 
         <div v-if="loading" class="loader-overlay"><div class="loader"></div></div>
 
-        <div v-if="!showAuthModal" class="max-w-md mx-auto min-h-screen flex flex-col p-5 pb-28">
+        <div v-if="!showAuthModal" class="max-w-md mx-auto min-h-screen flex flex-col p-5 pb-28 w-full">
             <header class="flex justify-between items-center mb-6">
                 <div>
                     <h1 class="text-2xl font-black text-[#ff9e97]" @click="resetView">推し活紀錄🌸</h1>
@@ -123,7 +123,7 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 gap-3">
                         <div class="space-y-1">
                             <select v-model="form.location" class="w-full bg-[#f8f9fa] rounded-xl p-3 text-xs outline-none">
                                 <option value="線上">🌐 線上</option><option value="東京">🗼 東京</option><option value="京都">⛩️ 京都</option><option value="其他">📍 其他</option>
@@ -138,7 +138,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 gap-3">
                         <input type="date" v-model="form.date" class="bg-[#f8f9fa] rounded-xl p-3 text-xs outline-none">
                         <input type="number" v-model="form.tickets" placeholder="枚數" class="bg-[#f8f9fa] rounded-xl p-3 text-sm font-bold text-center outline-none">
                     </div>
@@ -208,7 +208,7 @@
                         <input v-model="newItem.member" placeholder="成員姓名" class="flex-grow bg-[#f8f9fa] rounded-xl p-3 text-xs outline-none">
                         <button @click="addToDb('members')" class="bg-[#ffb7b2] text-white px-5 rounded-xl text-xs font-bold">新增</button>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 gap-3">
                         <div v-for="m in db.members" :key="m.name" class="bg-white p-3 rounded-2xl flex flex-col items-center relative shadow-sm border border-gray-50">
                             <div class="w-14 h-14 rounded-2xl mb-2 shadow-inner border-2 border-white cursor-pointer" 
                                  :style="getMemberStyle(m.name)"
@@ -287,7 +287,7 @@
                 </div>
             </div>
 
-            <nav class="fixed bottom-6 left-6 right-6 soft-card py-3 px-10 flex justify-between items-center z-40">
+            <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-md soft-card py-3 px-10 flex justify-between items-center z-40">
                 <button @click="resetView" :class="currentPage === 'home' ? 'text-[#ffb7b2]' : 'text-gray-200'"><i class="fas fa-th-large text-lg"></i></button>
                 <button @click="currentPage = 'add'" :class="currentPage === 'add' ? 'text-[#ffb7b2]' : 'text-gray-200'"><i class="fas fa-plus-circle text-2xl"></i></button>
                 <button @click="currentPage = 'history'" :class="currentPage === 'history' ? 'text-[#ffb7b2]' : 'text-gray-200'"><i class="fas fa-book-open text-lg"></i></button>
@@ -296,7 +296,6 @@
     </div>
 
     <script>
-        // Firebase 配置 (來自 Talk 3)
         const firebaseConfig = {
             apiKey: "AIzaSyAgsjhSx6LUBoXAhu0RO9f-0--jcxl91c8",
             authDomain: "migurirepo.firebaseapp.com",
@@ -334,7 +333,6 @@
                 }
             },
             mounted() {
-                // 監聽 Auth 狀態
                 auth.onAuthStateChanged(user => {
                     this.loading = false;
                     if (user) {
@@ -373,60 +371,57 @@
                 }
             },
             methods: {
-                // Firebase Auth 邏輯
-                async handleAuth() {
-                    if (!this.authEmail || !this.authPassword) return alert("請填寫完整資訊");
-                    this.loading = true;
-                    try {
-                        if (this.isRegistering) {
-                            await auth.createUserWithEmailAndPassword(this.authEmail, this.authPassword);
-                        } else {
-                            await auth.signInWithEmailAndPassword(this.authEmail, this.authPassword);
-                        }
-                    } catch (e) {
-let errorMsg = "發生未知錯誤";
+async handleAuth() {
+    if (!this.authEmail || !this.authPassword) return alert("請填寫完整資訊");
+    this.loading = true;
+    try {
+        if (this.isRegistering) {
+            await auth.createUserWithEmailAndPassword(this.authEmail, this.authPassword);
+        } else {
+            await auth.signInWithEmailAndPassword(this.authEmail, this.authPassword);
+        }
+    } catch (e) {
+        let errorMsg = "發生未知錯誤";
         
         switch (e.code) {
             case 'auth/invalid-credential':
                 errorMsg = "帳號或密碼輸入錯誤。";
                 break;
             case 'auth/user-not-found':
-                errorMsg = "找不到帳號。";
+                errorMsg = "找不到這個帳號，請先註冊。";
                 break;
             case 'auth/wrong-password':
                 errorMsg = "密碼錯誤。";
                 break;
             case 'auth/email-already-in-use':
-                errorMsg = "這個電子郵件已經註冊過。";
+                errorMsg = "電子郵件已被註冊過。";
                 break;
             case 'auth/invalid-email':
                 errorMsg = "電子郵件格式錯誤。";
                 break;
             case 'auth/weak-password':
-                errorMsg = "密碼=至少要6個字。";
+                errorMsg = "密碼至少要6個字。";
                 break;
             default:
-                errorMsg = e.message;
+                errorMsg = e.message; 
         }
-                        alert(e.message);
-
-                        this.loading = false;
-                    }
-                },
+        
+        alert(errorMsg);
+    } finally {
+        this.loading = false;
+    }
+},
                 async handleLogout() {
                     if (confirm("確定登出嗎？")) await auth.signOut();
                 },
 
-                // Firebase Firestore 讀取邏輯
                 async fetchData() {
                     if (!this.user) return;
                     this.loading = true;
                     try {
-                        // 讀取設定
                         const dbDoc = await dbStore.collection('users').doc(this.user.uid).collection('settings').doc('db').get();
                         if (dbDoc.exists) this.db = dbDoc.data();
 
-                        // 讀取歷史紀錄
                         const snapshot = await dbStore.collection('users').doc(this.user.uid).collection('history').orderBy('date', 'desc').get();
                         this.history = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     } catch (e) {
@@ -576,6 +571,7 @@ let errorMsg = "發生未知錯誤";
                             },
                             options: {
                                 responsive: true,
+                                maintainAspectRatio: true,
                                 plugins: { legend: { display: true, labels: { boxWidth: 12, font: { size: 10 } } } },
                                 scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
                             }
@@ -599,6 +595,7 @@ let errorMsg = "發生未知錯誤";
                             options: {
                                 indexAxis: 'y', 
                                 responsive: true,
+                                maintainAspectRatio: true,
                                 plugins: { legend: { display: false } },
                                 scales: { 
                                     x: { beginAtZero: true },
